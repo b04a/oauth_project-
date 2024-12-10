@@ -10,4 +10,10 @@ templates = Jinja2Templates(directory="templates")
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/login_yandex")
+async def login():
+    return {"oauth": "yandex"}
 
+@app.get("/login_vk")
+async def login():
+    return {"oauth": "vk"}
