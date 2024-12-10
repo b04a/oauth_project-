@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.security import OAuth2AuthorizationCodeBearer
 from starlette.responses import RedirectResponse
 import requests
 import httpx
@@ -15,13 +16,25 @@ VK_AUTH_URL = "https://oauth.vk.com/authorize"
 VK_TOKEN_URL = "https://oauth.vk.com/access_token"
 VK_API_URL = "https://api.vk.com/method/users.get"
 
+# Укажите ваш клиентский ID и секрет
+CLIENT_ID = "defd7471d35f48719e3e341a3e044440"
+CLIENT_SECRET = "1a8ec048ac934d8ebdf2625b1b16a23f"
+REDIRECT_URI = "https://78f0-178-204-45-119.ngrok-free.app/callback"  # Замените на ваш ngrok URL
+
+oauth2_scheme = OAuth2AuthorizationCodeBearer(
+    authorizationUrl="https://oauth.yandex.ru/authorize",
+    tokenUrl="https://oauth.yandex.ru/token"
+)
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/login_yandex")
 async def login():
-    return {"oauth": "yandex"}
+    return RedirectResponse(
+        f"https://oauth.yandex.ru/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
+    )
 
 @app.get("/login_vk")
 async def login():
